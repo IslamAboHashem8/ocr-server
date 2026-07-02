@@ -3,6 +3,7 @@ from fastapi.responses import JSONResponse
 import easyocr
 import tempfile
 import os
+import traceback
 
 app = FastAPI()
 
@@ -41,9 +42,15 @@ async def run_ocr(image: UploadFile = File(...)):
 
         print(f"OCR completed: {len(texts)} texts found")
         return JSONResponse(content={"texts": texts})
+        
+        except Exception as e:
+            traceback.print_exc()
+            return JSONResponse(
+                status_code=500,
+                content={"error": str(e)}
+                )
 
-    except Exception as e:
-        print(f"OCR error: {str(e)}")
+    
         return JSONResponse(
             status_code=500,
             content={"error": str(e)}
